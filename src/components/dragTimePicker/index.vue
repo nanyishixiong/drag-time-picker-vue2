@@ -178,7 +178,8 @@ export default {
       col: 0,
       flag: `flag-${+new Date()}`,
       customPeriodList,
-      timeData: []
+      timeData: [],
+      isIncoming: false // 当前值是否外部传入
     };
   },
   computed: {
@@ -211,12 +212,17 @@ export default {
       // timeData 改变 重新计算 selectValue 并将选中值抛出
       const selectValue = splicing(this.timeData);
       const result = this.format(selectValue);
-      this.$emit("change:value", result); // 抛出选中值给父组件读取
+      if (this.isIncoming) {
+        this.isIncoming = false;
+      } else {
+        this.$emit("change:value", result); // 抛出选中值给父组件读取
+      }
       return selectValue;
     }
   },
   created() {
     this.timeData = createTimeData(this.range * 2);
+    this.isIncoming = true;
     this.valueToSelectValue();
   },
   destroyed() {
@@ -229,9 +235,10 @@ export default {
         return item;
       });
     },
-    value(val) {
-      // TODO 对value做处理
-      console.log(val);
+    value() {
+      this.isIncoming = true;
+      // 回填 将传入的值转换为timeData check属性
+      this.valueToSelectValue();
     }
   },
   methods: {
@@ -297,7 +304,7 @@ export default {
       if (!txt) {
         return [];
       }
-      let timeRange = txt.replace("次日", "").split("、");
+      let timeRange = txt.split("、");
       let result = timeRange.map((item) => {
         let arr = item.split("~");
         return {
