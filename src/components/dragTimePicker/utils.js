@@ -54,8 +54,6 @@ const createTimeData = (max) => {
   })
 }
 
-export default createTimeData(96)
-
 function splicing(list) {
   let same, minCol, maxCol
   let i = -1
@@ -68,12 +66,17 @@ function splicing(list) {
     if (item.check) {
       if (item.check !== Boolean(same)) {
         minCol = item.col
-        arr.push(...['、', item.begin, '~', item.end])
+        let begin = item.begin, end = item.end;
+        if(minCol > 47){
+          begin = `次日${begin}`;
+          end = `次日${end}`;
+        }
+        arr.push(...['、', begin, '~', end])
       } else if (arr.length) {
         maxCol = item.col
         let end = item.end
         arr.pop()
-        if(maxCol > 47 && minCol <=47){
+        if(maxCol > 47){
           end = `次日${end}`
         }
         arr.push(end)
@@ -84,8 +87,29 @@ function splicing(list) {
   arr.shift()
   return arr.join('')
 }
+// 次日04:30 => col 第几格
+function timeToCol(time = '', isStart = true){
+  let col = 0;
+  if(time.includes('次日')){
+    time = time.replace('次日', '');
+    col = 48;
+  }
+
+  let tmp = isStart ? 1 : 0; // startTime和
+
+  let [hour, minute] = time.split(':');
+  if(minute === '30'){
+    // 4 * 2 = 8格 后面有30分钟 总共9格，索引为8
+    col += hour * 2 + tmp; 
+  }else{
+    col += hour * 2 - 1 + tmp;
+  }
+
+  return col;
+}
 
 export {
   splicing,
-  createTimeData
+  createTimeData,
+  timeToCol
 }

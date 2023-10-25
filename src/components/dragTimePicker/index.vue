@@ -1,50 +1,56 @@
 <template>
   <div>
     <!-- 时间段区域 单选 多选 两种 -->
-    <div v-if="needCustomPeriod" style="margin-bottom: 10px;">
-      <bm-button v-for="(item, index)  in customPeriodList" :key="index" :disabled="isDetail || disabled" @click="customTimePeriodChangeHandler($event, index)">
-        {{item.timePeriod + '(' + item.label + ')'}}
+    <div v-if="needCustomPeriod" style="margin-bottom: 10px">
+      <bm-button
+        v-for="(item, index) in customPeriodList"
+        :key="index"
+        :disabled="isDetail || disabled"
+        @click="customTimePeriodChangeHandler($event, index)"
+      >
+        {{ item.timePeriod + "(" + item.label + ")" }}
       </bm-button>
-      <bm-checkbox-group v-model="customPeriodModel" size="medium">
-        <bm-checkbox v-for="(item, index)  in customPeriodList" :key="index" :label="item.timePeriod" border @change="customTimePeriodChangeHandler($event, index, customPeriodModel)">
-          {{ item.timePeriod + '(' + item.label + ')' }}
-        </bm-checkbox>
-      </bm-checkbox-group>
     </div>
-    
+
     <div :class="['c-time', flag]">
-      <div class="c-schedue"></div>
+      <!-- 鼠标拖动时的蒙层 -->
       <div :class="{ 'c-schedue': true, 'c-schedue-notransi': mode }" :style="styleValue"></div>
       <table :class="{ 'c-min-table': colspan < 2 }" class="c-time-table">
-        <!-- 动态传入 -->
+        <!-- 表格头 -->
         <thead class="c-time-head">
+          <!-- 表头——时间段 00:00 - 12:00 -->
           <tr>
             <th v-for="(t, i) in thLabel" :key="i" :colspan="12 * colspan">{{ t }}</th>
           </tr>
+          <!-- 表头——小时 -->
           <tr>
             <td v-for="(t, n) in theadArr" :key="n" :colspan="colspan">{{ t }}</td>
           </tr>
         </thead>
+        <!-- 表格体 -->
         <tbody class="c-time-body">
           <tr>
-            <td v-for="(t, i) in data" :key="i"
+            <td
+              v-for="(t, i) in timeData"
+              :key="i"
               :data-time="`${t.col}`"
               :class="selectClasses(t)"
               @mouseenter="cellEnter(t)"
               @mousedown="cellDown(t)"
               @mouseup="cellUp(t)"
-              class="time-atom-item"></td>
+              class="time-atom-item"
+            ></td>
           </tr>
           <tr>
             <td :colspan="tdCount" class="c-time-preview">
               <div class="g-clearfix c-time-con">
-                <span class="g-pull-left">{{
-                  selectValue ? '已选择时间段' : '可拖动鼠标在灰色区域内选择时间段'
-                }}</span>
-                <a @click.prevent="$emit('on-clear')" class="g-pull-right">清空选择</a>
+                <span class="g-pull-left">
+                  {{ selectValue ? "已选择时间段" : "可拖动鼠标在灰色区域内选择时间段" }}
+                </span>
+                <a @click="clearTime" class="g-pull-right">清空选择</a>
               </div>
               <div v-if="selectValue" class="c-time-time">
-                <div>{{selectValue}}</div>
+                <div>{{ selectValue }}</div>
               </div>
             </td>
           </tr>
@@ -56,119 +62,110 @@
         </tbody>
         <tbody class="c-disabled" v-if="isDetail || disabled"></tbody>
       </table>
-      <div></div>
     </div>
   </div>
 </template>
 
 <script>
+import { createTimeData, splicing, timeToCol } from "./utils.js";
+
 const createArr = (len) => {
-  return Array.from(Array(len)).map((ret, id) => id)
-}
+  return Array.from(Array(len)).map((_, i) => i);
+};
 const customPeriodList = [
   {
-    timePeriod: '00:00-24:00',
-    label: '全天',
-    type: 'allDay',
+    timePeriod: "00:00~24:00",
+    label: "全天",
+    type: "allDay",
     range: [0, 47],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '06:00-10:30',
-    label: '早餐',
-    type: 'breakfast',
+    timePeriod: "06:00~10:30",
+    label: "早餐",
+    type: "breakfast",
     range: [12, 20],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '10:30-13:30',
-    label: '午高峰',
-    type: 'middayPeak',
+    timePeriod: "10:30~13:30",
+    label: "午高峰",
+    type: "middayPeak",
     range: [21, 26],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '13:30-17:00',
-    label: '下午茶',
-    type: 'afternoonTea',
+    timePeriod: "13:30~17:00",
+    label: "下午茶",
+    type: "afternoonTea",
     range: [27, 33],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '17:00-20:00',
-    label: '晚高峰',
-    type: 'eveningRushHour',
+    timePeriod: "17:00~20:00",
+    label: "晚高峰",
+    type: "eveningRushHour",
     range: [34, 39],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '20:00-24:00',
-    label: '夜宵1',
-    type: 'lateNightSnack1',
+    timePeriod: "20:00~24:00",
+    label: "夜宵1",
+    type: "lateNightSnack1",
     range: [40, 47],
-    selected: false,
+    selected: false
   },
   {
-    timePeriod: '00:00-6:00',
-    label: '夜宵2',
-    type: 'lateNightSnack2',
+    timePeriod: "00:00~6:00",
+    label: "夜宵2",
+    type: "lateNightSnack2",
     range: [0, 11],
-    selected: false,
-  },
+    selected: false
+  }
 ];
 export default {
-  name: 'DragTimePicker',
+  name: "DragTimePicker",
+  model: {
+    prop: "value",
+    event: "change:value"
+  },
   props: {
-    continuousTimePeriod: {
-      type: Array,
-      required: false
-    },
+    // continuousTimePeriod: {
+    //   type: Array,
+    //   required: false
+    // },
     needCustomPeriod: {
       type: Boolean,
       default() {
-        return false
+        return false;
       }
     },
     value: {
-      type: String,
-      required: true
-    },
-    data: {
+      // v-model
       type: Array,
       required: true
-    },
-    tdCount: {
-      type: Number,
-      default() {
-        return 96
-      }
     },
     range: {
+      // 代表展示多少个小时
       type: Number,
       default() {
-        return 48
-      }
-    },
-    thLabel: {
-      type: Array,
-      default() {
-        return ['00:00 - 12:00', '12:00 - 24:00', '00:00 - 12:00', '12:00 - 24:00']
+        return 48;
       }
     },
     colspan: {
       type: Number,
       default() {
-        return 2
+        return 2;
       }
     },
     status: {
       type: String,
-      default: ''
+      default: ""
     },
     disabled: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -179,11 +176,10 @@ export default {
       mode: 0,
       row: 0,
       col: 0,
-      // theadArr: [],
       flag: `flag-${+new Date()}`,
-      customPeriodModel: [], // 
       customPeriodList,
-    }
+      timeData: []
+    };
   },
   computed: {
     styleValue() {
@@ -192,122 +188,154 @@ export default {
         height: `${this.height}px`,
         left: `${this.left}px`,
         top: `${this.top}px`
-      }
-    },
-    selectValue() {
-      return this.value
+      };
     },
     selectClasses() {
-      return (n) => n.check ? 'ui-selected' : ''
+      return (n) => (n.check ? "ui-selected" : "");
     },
     isDetail() {
-      return this.status === 'detail'
+      return this.status === "detail";
     },
     theadArr() {
-      return this.range > 24 ? Array.from(Array(this.range / 24)).reduce((prev) => { return prev.concat(createArr(24)) }, []) : createArr(this.range)
+      // 构建 0-23 的数组，超过24的数组例如48为 0-230-23
+      return this.range > 24 ? Array.from(Array(this.range / 24)).reduce((prev) => prev.concat(createArr(24)), []) : createArr(24);
     },
+    thLabel() {
+      return Array.from(Array(this.range / 24)).reduce((prev) => prev.concat(["00:00 ~ 12:00", "12:00 ~ 24:00"]), []);
+    },
+    tdCount() {
+      return this.range * 2;
+    },
+    selectValue() {
+      // 展示选中时间段字符串
+      // timeData 改变 重新计算 selectValue 并将选中值抛出
+      const selectValue = splicing(this.timeData);
+      const result = this.format(selectValue);
+      this.$emit("change:value", result); // 抛出选中值给父组件读取
+      return selectValue;
+    }
+  },
+  created() {
+    this.timeData = createTimeData(this.range * 2);
+    this.valueToSelectValue();
   },
   destroyed() {
-    this.$emit('on-clear');
+    this.$emit("on-clear");
   },
   watch: {
-    continuousTimePeriod(arr) {
-      this.customPeriodModel = []
-      arr.forEach(subArr => {
-        this.customPeriodList.forEach(item => {
-          console.log(subArr, item);
-          const isHit = JSON.stringify(item.range) === JSON.stringify([subArr[0].col, subArr[subArr.length-1].col])
-          if (isHit) {
-            this.customPeriodModel.push(item.timePeriod + '(' + item.label + ')');
-          }
-        });
-      })
-    },
     range() {
-      this.customPeriodList = this.customPeriodList.map(item => {
+      this.customPeriodList = this.customPeriodList.map((item) => {
         item.selected = false;
         return item;
       });
     },
+    value(val) {
+      // TODO 对value做处理
+      console.log(val);
+    }
   },
   methods: {
-    customTimePeriodChangeHandler(_, index, customPeriodModel) { // 
-      this.customPeriodList[index].selected = !this.customPeriodList[index].selected;
-      this.$emit('custom-time-period-change', { target: this.customPeriodList[index] }, customPeriodModel);
+    customTimePeriodChangeHandler(_, index) {
+      //
+      const { range, selected } = this.customPeriodList[index];
+      this.customPeriodList[index].selected = !selected;
+      this.selectTime(range, !selected);
+      this.$emit("custom-time-period-change", { target: this.customPeriodList[index] });
     },
-    cellDown(item) { // 鼠标落下
-      const ele = document.querySelector(
-        `.${this.flag} td[data-time='${item.col}']`
-      )
-      this.check = Boolean(item.check)
-      this.mode = 1
+    cellDown(item) {
+      // 鼠标落下
+      const ele = document.querySelector(`.${this.flag} td[data-time='${item.col}']`);
+      this.check = Boolean(item.check);
+      this.mode = 1;
       if (ele) {
-        this.width = ele.offsetWidth
-        this.height = ele.offsetHeight
+        this.width = ele.offsetWidth;
+        this.height = ele.offsetHeight;
       }
 
-      this.col = item.col
+      this.col = item.col;
     },
-    cellEnter(item) { // 鼠标进入
-      const ele = document.querySelector(
-        `.${this.flag} td[data-time='${item.col}']`
-      )
-      if(item.col - this.col >= 48) {
-        return
+    cellEnter(item) {
+      // 鼠标进入
+      const ele = document.querySelector(`.${this.flag} td[data-time='${item.col}']`);
+      if (item.col - this.col >= 48) {
+        return;
       }
       if (ele && !this.mode) {
-        this.left = ele.offsetLeft
-        this.top = ele.offsetTop
+        this.left = ele.offsetLeft;
+        this.top = ele.offsetTop;
       } else if (item.col <= this.col) {
-        this.width = (this.col - item.col + 1) * ele.offsetWidth
-        this.left = ele.offsetLeft
-        this.top = ele.offsetTop
+        this.width = (this.col - item.col + 1) * ele.offsetWidth;
+        this.left = ele.offsetLeft;
+        this.top = ele.offsetTop;
       } else if (item.col >= this.col) {
-        this.width = (item.col - this.col + 1) * ele.offsetWidth
-        if (item.col > this.col) this.top = ele.offsetTop
-        if (item.col === this.col) this.left = ele.offsetLeft
-      } 
-      // else if (item.col > this.col) {
-      //   this.width = (item.col - this.col + 1) * ele.offsetWidth
-      //   this.top = ele.offsetTop
-      // } else if (item.col < this.col) {
-      //   this.width = (this.col - item.col + 1) * ele.offsetWidth
-      //   this.left = ele.offsetLeft
-      // }
-      this.height = ele.offsetHeight
+        this.width = (item.col - this.col + 1) * ele.offsetWidth;
+        if (item.col > this.col) this.top = ele.offsetTop;
+        if (item.col === this.col) this.left = ele.offsetLeft;
+      }
+
+      this.height = ele.offsetHeight;
     },
-    cellUp(item) { // 鼠标抬起 这三个是控制拖动时的动画效果
-      if(item.col - this.col >= 48) {
-        this.width = 0
-        this.height = 0
-        this.mode = 0
-        return  this.$message.error('时段选择不得超过24小时')
+    cellUp(item) {
+      // 鼠标抬起 这三个是控制拖动时的动画效果
+      if (item.col - this.col >= 48) {
+        this.width = 0;
+        this.height = 0;
+        this.mode = 0;
+        return this.$message.error("时段选择不得超过24小时");
       }
       if (item.col <= this.col) {
-        this.selectTime([item.col, this.col], !this.check)
+        this.selectTime([item.col, this.col], !this.check);
       } else if (item.col >= this.col) {
-        this.selectTime([this.col, item.col], !this.check)
-      } 
-      // else if (item.col > this.col) {
-      //   this.selectTime([this.col, item.col], !this.check)
-      // } else if (item.col < this.col) {
-      //   this.selectTime([item.col, this.col], !this.check)
-      // }
+        this.selectTime([this.col, item.col], !this.check);
+      }
 
-      this.width = 0
-      this.height = 0
-      this.mode = 0
+      this.width = 0;
+      this.height = 0;
+      this.mode = 0;
+    },
+    format(txt) {
+      if (!txt) {
+        return [];
+      }
+      let timeRange = txt.replace("次日", "").split("、");
+      let result = timeRange.map((item) => {
+        let arr = item.split("~");
+        return {
+          startTime: arr[0],
+          endTime: arr[1]
+        };
+      });
+      return result;
+    },
+    valueToSelectValue() {
+      // 回填 将传入的值转换为timeData check属性
+      if (this.value instanceof Array) {
+        this.value.forEach(({ startTime, endTime }) => {
+          const minCol = timeToCol(startTime, true);
+          const maxCol = timeToCol(endTime, false);
+          for (let i = minCol; i <= maxCol; i++) {
+            this.$set(this.timeData[i], "check", true);
+          }
+        });
+      }
     },
     selectTime(col, check) {
-      const [minCol, maxCol] = col
-      this.data.forEach((t) => {
+      const [minCol, maxCol] = col;
+      // 一切变化 源于对 timeData check属性的修改
+      // timeData需要被主动修改 所以并不能是 计算属性
+      this.timeData.forEach((t) => {
         if (t.col >= minCol && t.col <= maxCol) {
-          this.$set(t, 'check', check)
+          this.$set(t, "check", check);
         }
-      })
+      });
+    },
+    clearTime() {
+      this.timeData.forEach((t) => {
+        this.$set(t, "check", false);
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -323,13 +351,12 @@ export default {
   position: absolute;
   width: 0;
   height: 0;
-  opacity: '0.6';
+  opacity: "0.6";
   pointer-events: none;
   z-index: 99;
 }
 .c-schedue-notransi {
-  transition: width 0.12s ease, height 0.12s ease, top 0.12s ease,
-    left 0.12s ease;
+  transition: width 0.12s ease, height 0.12s ease, top 0.12s ease, left 0.12s ease;
 }
 .c-time-table {
   border-collapse: collapse !important;
@@ -388,8 +415,8 @@ export default {
       }
     }
   }
-  .c-time-note{
-    div{
+  .c-time-note {
+    div {
       text-align: left;
       padding: 0 10px;
     }
@@ -406,7 +433,7 @@ export default {
   &:after,
   &:before {
     clear: both;
-    content: ' ';
+    content: " ";
     display: table;
   }
 }
@@ -426,8 +453,7 @@ export default {
   position: absolute;
   top: 60px;
   left: 0;
-  opacity: .5;
+  opacity: 0.5;
   cursor: not-allowed;
 }
-
 </style>
