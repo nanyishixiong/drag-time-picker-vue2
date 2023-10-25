@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 时间段区域 单选 多选 两种 -->
+    <!-- 时间段区域 支持 单选和多选 -->
     <div v-if="needCustomPeriod" style="margin-bottom: 10px">
       <bm-button
         v-for="(item, index) in customPeriodList"
@@ -230,10 +230,7 @@ export default {
   },
   watch: {
     range() {
-      this.customPeriodList = this.customPeriodList.map((item) => {
-        item.selected = false;
-        return item;
-      });
+      this.cancelCustomPerioSelected();
     },
     value() {
       this.isIncoming = true;
@@ -242,11 +239,21 @@ export default {
     }
   },
   methods: {
+    cancelCustomPerioSelected() {
+      // 取消 时间段区域 按钮 的选中状态
+      this.customPeriodList = this.customPeriodList.map((item) => {
+        item.selected = false;
+        return item;
+      });
+    },
     customTimePeriodChangeHandler(_, index) {
-      //
+      // 时间段区域 按钮 点击回调
       const { range, selected } = this.customPeriodList[index];
+      // 按钮选中状态取反
       this.customPeriodList[index].selected = !selected;
+      // 选中时间格
       this.selectTime(range, !selected);
+      // 触发事件，向自组件抛出数据
       this.$emit("custom-time-period-change", { target: this.customPeriodList[index] });
     },
     cellDown(item) {
@@ -301,6 +308,7 @@ export default {
       this.mode = 0;
     },
     format(txt) {
+      // 将选中数据转换格式
       if (!txt) {
         return [];
       }
@@ -327,6 +335,7 @@ export default {
       }
     },
     selectTime(col, check) {
+      // 选中时间格
       const [minCol, maxCol] = col;
       // 一切变化 源于对 timeData check属性的修改
       // timeData需要被主动修改 所以并不能是 计算属性
@@ -340,6 +349,7 @@ export default {
       this.timeData.forEach((t) => {
         this.$set(t, "check", false);
       });
+      this.cancelCustomPerioSelected();
     }
   }
 };
@@ -449,6 +459,7 @@ export default {
 }
 .g-pull-right {
   float: right;
+  cursor: pointer;
 }
 .g-tip-text {
   color: #999;

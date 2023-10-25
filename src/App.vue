@@ -51,8 +51,8 @@ export default {
     }, 3000);
   },
   methods: {
-    timePeriodChange({ target }, customPeriodModel) {
-      console.log(target.timePeriod, customPeriodModel);
+    timePeriodChange({ target }) {
+      console.log(target.timePeriod);
     },
     clearTime() {
       this.timeData.forEach((t) => {
