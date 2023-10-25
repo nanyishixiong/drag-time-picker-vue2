@@ -2,12 +2,7 @@
   <div>
     <!-- 时间段区域 支持 单选和多选 -->
     <div v-if="needCustomPeriod" style="margin-bottom: 10px">
-      <bm-button
-        v-for="(item, index) in customPeriodList"
-        :key="index"
-        :disabled="isDetail || disabled"
-        @click="customTimePeriodChangeHandler($event, index)"
-      >
+      <bm-button v-for="(item, index) in customPeriodList" :key="index" :disabled="disabled" @click="customTimePeriodChangeHandler($event, index)">
         {{ item.timePeriod + "(" + item.label + ")" }}
       </bm-button>
     </div>
@@ -60,7 +55,7 @@
             </td>
           </tr>
         </tbody>
-        <tbody class="c-disabled" v-if="isDetail || disabled"></tbody>
+        <tbody class="c-disabled" v-if="disabled"></tbody>
       </table>
     </div>
   </div>
@@ -130,10 +125,6 @@ export default {
     event: "change:value"
   },
   props: {
-    // continuousTimePeriod: {
-    //   type: Array,
-    //   required: false
-    // },
     needCustomPeriod: {
       type: Boolean,
       default() {
@@ -193,9 +184,6 @@ export default {
     },
     selectClasses() {
       return (n) => (n.check ? "ui-selected" : "");
-    },
-    isDetail() {
-      return this.status === "detail";
     },
     theadArr() {
       // 构建 0-23 的数组，超过24的数组例如48为 0-230-23
@@ -328,6 +316,7 @@ export default {
         this.value.forEach(({ startTime, endTime }) => {
           const minCol = timeToCol(startTime, true);
           const maxCol = timeToCol(endTime, false);
+          if (maxCol >= this.timeData.length) throw new Error(`Out of range, please check prop: "value"`);
           for (let i = minCol; i <= maxCol; i++) {
             this.$set(this.timeData[i], "check", true);
           }
