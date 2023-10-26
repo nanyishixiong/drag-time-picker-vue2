@@ -149,10 +149,6 @@ export default {
         return 2;
       }
     },
-    status: {
-      type: String,
-      default: ""
-    },
     disabled: {
       type: Boolean,
       default: false
@@ -177,7 +173,7 @@ export default {
     styleValue() {
       return {
         height: `${this.height}px`,
-        left: `${this.left}px`,
+        left: `${this.left}px`, // width:auto 利用left合和right拉伸蒙层
         right: `${this.right}px`,
         top: `${this.top}px`
       };
@@ -193,7 +189,7 @@ export default {
       return Array.from(Array(this.range / 24)).reduce((prev) => prev.concat(["00:00 ~ 12:00", "12:00 ~ 24:00"]), []);
     },
     tdCount() {
-      return this.range * 2;
+      return this.range * this.colspan;
     },
     selectValue() {
       // 展示选中时间段字符串
@@ -209,7 +205,7 @@ export default {
     }
   },
   created() {
-    this.timeData = createTimeData(this.range * 2);
+    this.timeData = createTimeData(this.range * this.colspan);
     this.isIncoming = true;
     this.valueToSelectValue();
   },
@@ -218,12 +214,18 @@ export default {
   },
   watch: {
     range() {
+      // range变化重新计算格子
+      this.timeData = createTimeData(this.range * this.colspan);
       this.cancelCustomPerioSelected();
     },
     value() {
       this.isIncoming = true;
       // 回填 将传入的值转换为timeData check属性
       this.valueToSelectValue();
+    },
+    colspan() {
+      // colspan变化重新计算格子
+      this.timeData = createTimeData(this.range * this.colspan);
     }
   },
   methods: {

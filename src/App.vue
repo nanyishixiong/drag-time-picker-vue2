@@ -1,11 +1,11 @@
 <template>
   <div style="width: 895px">
-    <DragTimePicker v-model="value" :range="24" />
+    <DragTimePicker v-model="value" :range="24" :colspan="3" />
   </div>
 </template>
 
 <script>
-import DragTimePicker from "./components/dragTimePicker/index.vue";
+import DragTimePicker from "./components/dragTimePicker";
 export default {
   name: "App",
   components: {
