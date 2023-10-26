@@ -1,5 +1,7 @@
 <template>
-  <DragTimePicker v-model="value" />
+  <div style="width: 895px">
+    <DragTimePicker v-model="value" :range="24" />
+  </div>
 </template>
 
 <script>

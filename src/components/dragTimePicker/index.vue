@@ -160,9 +160,9 @@ export default {
   },
   data() {
     return {
-      width: 0,
       height: 0,
       left: 0,
+      right: 0,
       top: 0,
       mode: 0,
       row: 0,
@@ -176,9 +176,9 @@ export default {
   computed: {
     styleValue() {
       return {
-        width: `${this.width}px`,
         height: `${this.height}px`,
         left: `${this.left}px`,
+        right: `${this.right}px`,
         top: `${this.top}px`
       };
     },
@@ -247,10 +247,12 @@ export default {
     cellDown(item) {
       // 鼠标落下
       const ele = document.querySelector(`.${this.flag} td[data-time='${item.col}']`);
+      const parent = document.querySelector(`.${this.flag}`);
       this.check = Boolean(item.check);
       this.mode = 1;
       if (ele) {
-        this.width = ele.offsetWidth;
+        this.left = ele.offsetLeft;
+        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth);
         this.height = ele.offsetHeight;
       }
 
@@ -259,28 +261,27 @@ export default {
     cellEnter(item) {
       // 鼠标进入
       const ele = document.querySelector(`.${this.flag} td[data-time='${item.col}']`);
+      const parent = document.querySelector(`.${this.flag}`);
       if (item.col - this.col >= 48) {
         return;
       }
       if (ele && !this.mode) {
         this.left = ele.offsetLeft;
+        this.right = parent.offsetWidth - ele.offsetLeft;
         this.top = ele.offsetTop;
-      } else if (item.col <= this.col) {
-        this.width = (this.col - item.col + 1) * ele.offsetWidth;
+      } else if (item.col == this.col) {
+        this.left = ele.offsetLeft;
+        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth);
+      } else if (item.col < this.col) {
         this.left = ele.offsetLeft;
         this.top = ele.offsetTop;
-      } else if (item.col >= this.col) {
-        this.width = (item.col - this.col + 1) * ele.offsetWidth;
-        if (item.col > this.col) this.top = ele.offsetTop;
-        if (item.col === this.col) this.left = ele.offsetLeft;
+      } else if (item.col > this.col) {
+        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth);
       }
-
-      this.height = ele.offsetHeight;
     },
     cellUp(item) {
       // 鼠标抬起 这三个是控制拖动时的动画效果
       if (item.col - this.col >= 48) {
-        this.width = 0;
         this.height = 0;
         this.mode = 0;
         return this.$message.error("时段选择不得超过24小时");
@@ -291,7 +292,6 @@ export default {
         this.selectTime([this.col, item.col], !this.check);
       }
 
-      this.width = 0;
       this.height = 0;
       this.mode = 0;
     },
@@ -355,7 +355,7 @@ export default {
 .c-schedue {
   background: #99bbec;
   position: absolute;
-  width: 0;
+  width: auto;
   height: 0;
   opacity: "0.6";
   pointer-events: none;
@@ -367,6 +367,8 @@ export default {
 .c-time-table {
   border-collapse: collapse !important;
   position: relative;
+  width: 100%;
+
   th {
     vertical-align: inherit;
     font-weight: bold;
