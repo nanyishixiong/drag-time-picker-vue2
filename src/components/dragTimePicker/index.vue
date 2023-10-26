@@ -143,10 +143,10 @@ export default {
         return 48;
       }
     },
-    colspan: {
+    step: {
       type: Number,
       default() {
-        return 2;
+        return 30;
       }
     },
     disabled: {
@@ -191,6 +191,12 @@ export default {
     tdCount() {
       return this.range * this.colspan;
     },
+    colspan() {
+      if (60 % this.step !== 0) {
+        throw new Error(`"step" must be a divisor of 60`);
+      }
+      return 60 / this.step;
+    },
     selectValue() {
       // 展示选中时间段字符串
       // timeData 改变 重新计算 selectValue 并将选中值抛出
@@ -205,7 +211,7 @@ export default {
     }
   },
   created() {
-    this.timeData = createTimeData(this.range * this.colspan);
+    this.createTimeData();
     this.isIncoming = true;
     this.valueToSelectValue();
   },
@@ -215,7 +221,7 @@ export default {
   watch: {
     range() {
       // range变化重新计算格子
-      this.timeData = createTimeData(this.range * this.colspan);
+      this.createTimeData();
       this.cancelCustomPerioSelected();
     },
     value() {
@@ -225,10 +231,13 @@ export default {
     },
     colspan() {
       // colspan变化重新计算格子
-      this.timeData = createTimeData(this.range * this.colspan);
+      this.createTimeData();
     }
   },
   methods: {
+    createTimeData() {
+      this.timeData = createTimeData(this.range * this.colspan, this.step);
+    },
     cancelCustomPerioSelected() {
       // 取消 时间段区域 按钮 的选中状态
       this.customPeriodList = this.customPeriodList.map((item) => {
@@ -278,12 +287,12 @@ export default {
         this.left = ele.offsetLeft;
         this.top = ele.offsetTop;
       } else if (item.col > this.col) {
-        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth);
+        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth); // TODO right 在有滚动时失效
       }
     },
     cellUp(item) {
       // 鼠标抬起 这三个是控制拖动时的动画效果
-      if (item.col - this.col >= 48) {
+      if (item.col - this.col >= 24 * this.colspan) {
         this.height = 0;
         this.mode = 0;
         return this.$message.error("时段选择不得超过24小时");

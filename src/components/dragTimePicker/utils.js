@@ -1,115 +1,106 @@
 const formatDate = (date, fmt, col, type) => {
-  if(type === 'end' && (col === 47 || col === 95)) {
-    return '24:00'
+  if (type === "end" && (col === 47 || col === 95)) {
+    return "24:00";
   }
   const o = {
-    'M+': date.getMonth() + 1,
-    'd+': date.getDate(),
-    'h+': date.getHours(),
-    'm+': date.getMinutes(),
-    's+': date.getSeconds(),
-    'q+': Math.floor((date.getMonth() + 3) / 3),
+    "M+": date.getMonth() + 1,
+    "d+": date.getDate(),
+    "h+": date.getHours(),
+    "m+": date.getMinutes(),
+    "s+": date.getSeconds(),
+    "q+": Math.floor((date.getMonth() + 3) / 3),
     S: date.getMilliseconds()
-  }
+  };
   if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(
-      RegExp.$1,
-      (date.getFullYear() + '').substr(4 - RegExp.$1.length)
-    )
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
   }
   for (const k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(
-        RegExp.$1,
-        RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-      )
+    if (new RegExp("(" + k + ")").test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
     }
   }
-  return fmt
-}
+  return fmt;
+};
 
 const createArr = (len) => {
-  return Array.from(Array(len)).map((ret, id) => id)
-}
+  return Array.from(Array(len)).map((ret, id) => id);
+};
 
-const formatWeektime = (col) => {
-  const timestamp = 1542384000000 // '2018-11-17 00:00:00'
-  const beginstamp = timestamp + col * 1800000 // col * 30 * 60 * 1000
-  const endstamp = beginstamp + 1800000
+const formatWeektime = (col, step) => {
+  const timestamp = 1542384000000; // '2018-11-17 00:00:00'
+  const beginstamp = timestamp + col * step * 60000; // col * step * 60 * 1000
+  const endstamp = beginstamp + step * 60000;
 
-  const begin = formatDate(new Date(beginstamp), 'hh:mm', col)
-  const end = formatDate(new Date(endstamp), 'hh:mm', col, 'end')
-  return `${begin}~${end}`
-}
+  const begin = formatDate(new Date(beginstamp), "hh:mm", col);
+  const end = formatDate(new Date(endstamp), "hh:mm", col, "end");
+  return `${begin}~${end}`;
+};
 
-const createTimeData = (max) => {
+const createTimeData = (max, step) => {
   return createArr(max).map((t, col) => {
     return {
-      value: formatWeektime(col),
-      begin: formatWeektime(col).split('~')[0],
-      end: formatWeektime(col).split('~')[1],
+      value: formatWeektime(col, step),
+      begin: formatWeektime(col, step).split("~")[0],
+      end: formatWeektime(col, step).split("~")[1],
       col,
       check: false
-     }
-  })
-}
+    };
+  });
+};
 
 function splicing(list) {
-  let same, minCol, maxCol
-  let i = -1
-  const len = list.length
-  const arr = []
+  let same, minCol, maxCol;
+  let i = -1;
+  const len = list.length;
+  const arr = [];
 
-  if (!len) return
+  if (!len) return;
   while (++i < len) {
-    const item = list[i]
+    const item = list[i];
     if (item.check) {
       if (item.check !== Boolean(same)) {
-        minCol = item.col
-        let begin = item.begin, end = item.end;
-        if(minCol > 47){
+        minCol = item.col;
+        let begin = item.begin,
+          end = item.end;
+        if (minCol > 47) {
           begin = `次日${begin}`;
           end = `次日${end}`;
         }
-        arr.push(...['、', begin, '~', end])
+        arr.push(...["、", begin, "~", end]);
       } else if (arr.length) {
-        maxCol = item.col
-        let end = item.end
-        arr.pop()
-        if(maxCol > 47){
-          end = `次日${end}`
+        maxCol = item.col;
+        let end = item.end;
+        arr.pop();
+        if (maxCol > 47) {
+          end = `次日${end}`;
         }
-        arr.push(end)
+        arr.push(end);
       }
     }
-    same = Boolean(item.check)
+    same = Boolean(item.check);
   }
-  arr.shift()
-  return arr.join('')
+  arr.shift();
+  return arr.join("");
 }
 // 次日04:30 => col 第几格
-function timeToCol(time = '', isStart = true){
+function timeToCol(time = "", isStart = true) {
   let col = 0;
-  if(time.includes('次日')){
-    time = time.replace('次日', '');
+  if (time.includes("次日")) {
+    time = time.replace("次日", "");
     col = 48;
   }
 
   let tmp = isStart ? 1 : 0; // startTime和
 
-  let [hour, minute] = time.split(':');
-  if(minute === '30'){
+  let [hour, minute] = time.split(":");
+  if (minute === "30") {
     // 4 * 2 = 8格 后面有30分钟 总共9格，索引为8
-    col += hour * 2 + tmp; 
-  }else{
+    col += hour * 2 + tmp;
+  } else {
     col += hour * 2 - 1 + tmp;
   }
 
   return col;
 }
 
-export {
-  splicing,
-  createTimeData,
-  timeToCol
-}
+export { splicing, createTimeData, timeToCol };
