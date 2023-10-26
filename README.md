@@ -1,29 +1,37 @@
-# drag-time-picker-vue2
+## 拖拽时间选择器
 
-This template should help get you started developing with Vue 3 in Vite.
+### Attributes
 
-## Recommended IDE Setup
+| 参数             | 说明             | 类型    | 默认值 | 备注                                                              |
+| ---------------- | ---------------- | ------- | ------ | ----------------------------------------------------------------- |
+| value / v-model  | 绑定值           | IValue  |        | 必填值                                                            |
+| needCustomPeriod | 控制时间段区显隐 | boolean | false  | 时间段区可通过点击快速选中常规时段<br />可选值参考**ITimePeriod** |
+| range            | 时间范围         | number  | 48     | 48 代表 48 小时，也就是 2 天                                      |
+| disabled         | 禁用             | boolean | false  | 值为 true 则不可选择时间                                          |
+| step             | 步长             | number  | 30     | 30 分钟，每个小时会被分割为 2 格（60 / step）                     |
+|                  |                  |         |        |                                                                   |
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+```ts
+type IValue = Array<{
+  startTime: string;
+  endTime: string;
+}>;
 ```
 
-### Compile and Hot-Reload for Development
+### Events
 
-```sh
-npm run dev
-```
+| 事件名称                  | 说明                     | 回调参数             |
+| ------------------------- | ------------------------ | -------------------- |
+| on-clear                  | 点击清空选择时触发       |                      |
+| custom-time-period-change | 点击时间段区的按钮时触发 | (Value: ITimePeriod) |
+|                           |                          |                      |
 
-### Compile and Minify for Production
-
-```sh
-npm run build
+```ts
+type ITimePeriod = {
+  timePeriod: string; // "00:00~24:00"
+  label: string; // "全天" "早餐" "午高峰" "下午茶" "晚高峰" "夜宵1" "夜宵2"
+  type: string; // "allDay"
+  range: [number, number]; // [0, 47] 从第0格到第47格
+  selected: boolean; // false
+};
 ```
