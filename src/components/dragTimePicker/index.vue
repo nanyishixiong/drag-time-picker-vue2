@@ -210,7 +210,7 @@ export default {
     this.valueToSelectValue();
   },
   destroyed() {
-    this.$emit("on-clear");
+    this.clearTime();
   },
   watch: {
     range() {
@@ -244,7 +244,7 @@ export default {
       // 选中时间格
       this.selectTime(range, !selected);
       // 触发事件，向自组件抛出数据
-      this.$emit("custom-time-period-change", { target: this.customPeriodList[index] });
+      this.$emit("custom-time-period-change", this.customPeriodList[index]);
     },
     cellDown(item) {
       // 鼠标落下
@@ -341,6 +341,8 @@ export default {
         this.$set(t, "check", false);
       });
       this.cancelCustomPerioSelected();
+      // 触发事件
+      this.$emit("on-clear");
     }
   }
 };
