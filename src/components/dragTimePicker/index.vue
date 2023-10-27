@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- 时间段区域 支持 单选和多选 -->
-    <div v-if="needCustomPeriod" class="button-wrapper">
+    <div v-if="needPeriod" class="button-wrapper">
       <button
         class="el-button"
         v-for="(item, index) in customPeriodList"
-        :key="index"
+        :key="item.key"
         :disabled="disabled"
         @click="customTimePeriodChangeHandler($event, index)"
       >
@@ -73,57 +73,59 @@ import { createTimeData, splicing, timeToCol } from "./utils.js";
 const createArr = (len) => {
   return Array.from(Array(len)).map((_, i) => i);
 };
-const customPeriodList = [
+const defaultCustomPeriodList = [
   {
     timePeriod: "00:00~24:00",
     label: "全天",
-    type: "allDay",
-    range: [0, 47],
+    key: "allDay",
     selected: false
   },
   {
     timePeriod: "06:00~10:30",
     label: "早餐",
-    type: "breakfast",
-    range: [12, 20],
+    key: "breakfast",
     selected: false
   },
   {
     timePeriod: "10:30~13:30",
     label: "午高峰",
-    type: "middayPeak",
-    range: [21, 26],
+    key: "middayPeak",
     selected: false
   },
   {
     timePeriod: "13:30~17:00",
     label: "下午茶",
-    type: "afternoonTea",
-    range: [27, 33],
+    key: "afternoonTea",
     selected: false
   },
   {
     timePeriod: "17:00~20:00",
     label: "晚高峰",
-    type: "eveningRushHour",
-    range: [34, 39],
+    key: "eveningRushHour",
     selected: false
   },
   {
     timePeriod: "20:00~24:00",
     label: "夜宵1",
-    type: "lateNightSnack1",
-    range: [40, 47],
+    key: "lateNightSnack1",
     selected: false
   },
   {
     timePeriod: "00:00~6:00",
     label: "夜宵2",
-    type: "lateNightSnack2",
-    range: [0, 11],
+    key: "lateNightSnack2",
     selected: false
   }
 ];
+const createPeriodList = (customPeriodList, colspan, step) => {
+  customPeriodList.forEach((item) => {
+    const [startTime, endTime] = item.timePeriod.split("~");
+    const minCol = timeToCol(startTime, true, step, colspan);
+    const maxCol = timeToCol(endTime, false, step, colspan);
+    item.range = [minCol, maxCol];
+  });
+  return customPeriodList;
+};
 export default {
   name: "DragTimePicker",
   model: {
@@ -131,7 +133,7 @@ export default {
     event: "change"
   },
   props: {
-    needCustomPeriod: {
+    needPeriod: {
       type: Boolean,
       default() {
         return false;
@@ -155,6 +157,12 @@ export default {
         return 30;
       }
     },
+    periodList: {
+      type: Array,
+      default() {
+        return defaultCustomPeriodList;
+      }
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -170,7 +178,7 @@ export default {
       row: 0,
       col: 0,
       flag: `flag-${+new Date()}`,
-      customPeriodList,
+      customPeriodList: [],
       timeData: [],
       isIncoming: false // 当前值是否外部传入
     };
@@ -219,6 +227,7 @@ export default {
   },
   created() {
     this.createTimeData();
+    this.customPeriodList = createPeriodList(this.periodList, this.colspan, this.step);
     this.isIncoming = true;
     this.valueToSelectValue();
   },
@@ -243,7 +252,7 @@ export default {
   },
   methods: {
     createTimeData() {
-      this.timeData = createTimeData(this.range * this.colspan, this.step);
+      this.timeData = createTimeData(this.range * this.colspan, this.step, this.colspan);
     },
     cancelCustomPerioSelected() {
       // 取消 时间段区域 按钮 的选中状态
@@ -332,8 +341,8 @@ export default {
       // 回填 将传入的值转换为timeData check属性
       if (this.value instanceof Array) {
         this.value.forEach(({ startTime, endTime }) => {
-          const minCol = timeToCol(startTime, true, this.colspan);
-          const maxCol = timeToCol(endTime, false, this.colspan);
+          const minCol = timeToCol(startTime, true, this.step, this.colspan);
+          const maxCol = timeToCol(endTime, false, this.step, this.colspan);
           if (maxCol >= this.timeData.length) throw new Error(`Out of range, please check prop: "value"`);
           for (let i = minCol; i <= maxCol; i++) {
             this.$set(this.timeData[i], "check", true);
