@@ -1,6 +1,6 @@
 <template>
   <div style="width: 895px">
-    <DragTimePicker v-model="value" :needCustomPeriod="true" :range="24" :step="20" />
+    <DragTimePicker v-model="value" :needCustomPeriod="true" :range="24" :step="30" @change="change" />
   </div>
 </template>
 
@@ -19,26 +19,16 @@ export default {
   },
   watch: {
     value(val) {
-      console.log(val);
+      // console.log(val);
     }
   },
-  mounted() {
-    // setTimeout(() => {
-    //   this.value = [
-    //     {
-    //       endTime: "18:30",
-    //       startTime: "16:00"
-    //     },
-    //     {
-    //       endTime: "次日18:30",
-    //       startTime: "次日16:00"
-    //     }
-    //   ];
-    // }, 3000);
-  },
+  mounted() {},
   methods: {
-    timePeriodChange({ target }) {
-      console.log(target.timePeriod);
+    timePeriodChange(value) {
+      console.log(value);
+    },
+    change(value) {
+      console.log(value);
     }
   }
 };

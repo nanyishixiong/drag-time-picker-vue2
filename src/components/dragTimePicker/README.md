@@ -1,5 +1,7 @@
 ## 拖拽时间选择器
 
+![](./src/assets/image.png)
+
 ### Attributes
 
 | 参数             | 说明             | 类型    | 默认值 | 备注                                                         |
@@ -24,7 +26,7 @@ type IValue = Array<{
 | ------------------------- | ------------------------ | -------------------- |
 | on-clear                  | 点击清空选择时触发       |                      |
 | custom-time-period-change | 点击时间段区的按钮时触发 | (Value: ITimePeriod) |
-|                           |                          |                      |
+| change                    | 值变化时触发             | (Value: IValue)      |
 
 ```ts
 type ITimePeriod = {

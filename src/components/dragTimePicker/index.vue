@@ -128,7 +128,7 @@ export default {
   name: "DragTimePicker",
   model: {
     prop: "value",
-    event: "change:value"
+    event: "change"
   },
   props: {
     needCustomPeriod: {
@@ -212,7 +212,7 @@ export default {
       if (this.isIncoming) {
         this.isIncoming = false;
       } else {
-        this.$emit("change:value", result); // 抛出选中值给父组件读取
+        this.$emit("change", result); // 抛出选中值给父组件读取
       }
       return selectValue;
     }
@@ -334,7 +334,6 @@ export default {
         this.value.forEach(({ startTime, endTime }) => {
           const minCol = timeToCol(startTime, true, this.colspan);
           const maxCol = timeToCol(endTime, false, this.colspan);
-          console.log(maxCol, this.timeData.length);
           if (maxCol >= this.timeData.length) throw new Error(`Out of range, please check prop: "value"`);
           for (let i = minCol; i <= maxCol; i++) {
             this.$set(this.timeData[i], "check", true);
