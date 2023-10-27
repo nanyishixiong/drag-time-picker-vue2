@@ -1,10 +1,16 @@
 <template>
   <div>
     <!-- 时间段区域 支持 单选和多选 -->
-    <div v-if="needCustomPeriod" style="margin-bottom: 10px">
-      <bm-button v-for="(item, index) in customPeriodList" :key="index" :disabled="disabled" @click="customTimePeriodChangeHandler($event, index)">
+    <div v-if="needCustomPeriod" class="button-wrapper">
+      <button
+        class="el-button"
+        v-for="(item, index) in customPeriodList"
+        :key="index"
+        :disabled="disabled"
+        @click="customTimePeriodChangeHandler($event, index)"
+      >
         {{ item.timePeriod + "(" + item.label + ")" }}
-      </bm-button>
+      </button>
     </div>
 
     <div :class="['c-time', flag]">
@@ -192,6 +198,7 @@ export default {
       return this.range * this.colspan;
     },
     colspan() {
+      // 一个小时多少格
       if (60 % this.step !== 0) {
         throw new Error(`"step" must be a divisor of 60`);
       }
@@ -200,7 +207,7 @@ export default {
     selectValue() {
       // 展示选中时间段字符串
       // timeData 改变 重新计算 selectValue 并将选中值抛出
-      const selectValue = splicing(this.timeData);
+      const selectValue = splicing(this.timeData, this.colspan);
       const result = this.format(selectValue);
       if (this.isIncoming) {
         this.isIncoming = false;
@@ -273,7 +280,7 @@ export default {
       // 鼠标进入
       const ele = document.querySelector(`.${this.flag} td[data-time='${item.col}']`);
       const parent = document.querySelector(`.${this.flag}`);
-      if (item.col - this.col >= 48) {
+      if (item.col - this.col >= 24 * this.colspan) {
         return;
       }
       if (ele && !this.mode) {
@@ -287,7 +294,7 @@ export default {
         this.left = ele.offsetLeft;
         this.top = ele.offsetTop;
       } else if (item.col > this.col) {
-        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth); // TODO right 在有滚动时失效
+        this.right = parent.offsetWidth - (ele.offsetLeft + ele.offsetWidth);
       }
     },
     cellUp(item) {
@@ -325,8 +332,9 @@ export default {
       // 回填 将传入的值转换为timeData check属性
       if (this.value instanceof Array) {
         this.value.forEach(({ startTime, endTime }) => {
-          const minCol = timeToCol(startTime, true);
-          const maxCol = timeToCol(endTime, false);
+          const minCol = timeToCol(startTime, true, this.colspan);
+          const maxCol = timeToCol(endTime, false, this.colspan);
+          console.log(maxCol, this.timeData.length);
           if (maxCol >= this.timeData.length) throw new Error(`Out of range, please check prop: "value"`);
           for (let i = minCol; i <= maxCol; i++) {
             this.$set(this.timeData[i], "check", true);
@@ -477,5 +485,35 @@ export default {
   left: 0;
   opacity: 0.5;
   cursor: not-allowed;
+}
+</style>
+<style lang="scss" scoped>
+.button-wrapper {
+  margin-bottom: 10px;
+  /* display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; */
+}
+.el-button {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 5px;
+  transition: 0.1s;
+  font-weight: 500;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+.el-button:hover {
+  color: #409eff;
+  border-color: #409eff;
 }
 </style>

@@ -48,7 +48,7 @@ const createTimeData = (max, step) => {
   });
 };
 
-function splicing(list) {
+function splicing(list, colspan) {
   let same, minCol, maxCol;
   let i = -1;
   const len = list.length;
@@ -62,7 +62,7 @@ function splicing(list) {
         minCol = item.col;
         let begin = item.begin,
           end = item.end;
-        if (minCol > 47) {
+        if (minCol >= 24 * colspan) {
           begin = `次日${begin}`;
           end = `次日${end}`;
         }
@@ -71,7 +71,7 @@ function splicing(list) {
         maxCol = item.col;
         let end = item.end;
         arr.pop();
-        if (maxCol > 47) {
+        if (maxCol >= 24 * colspan) {
           end = `次日${end}`;
         }
         arr.push(end);
@@ -83,21 +83,21 @@ function splicing(list) {
   return arr.join("");
 }
 // 次日04:30 => col 第几格
-function timeToCol(time = "", isStart = true) {
+function timeToCol(time = "", isStart = true, colspan) {
   let col = 0;
   if (time.includes("次日")) {
     time = time.replace("次日", "");
-    col = 48;
+    col = 24 * colspan;
   }
 
-  let tmp = isStart ? 1 : 0; // startTime和
+  let tmp = isStart ? 1 : 0; // startTime和endTime 计算方式不同
 
   let [hour, minute] = time.split(":");
   if (minute === "30") {
     // 4 * 2 = 8格 后面有30分钟 总共9格，索引为8
-    col += hour * 2 + tmp;
+    col += hour * colspan + tmp;
   } else {
-    col += hour * 2 - 1 + tmp;
+    col += hour * colspan - 1 + tmp;
   }
 
   return col;
