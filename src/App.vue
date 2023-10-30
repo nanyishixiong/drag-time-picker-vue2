@@ -1,6 +1,15 @@
 <template>
   <div style="width: 1200px">
-    <DragTimePicker v-model="value" :needPeriod="true" :range="48" :step="60" @change="change" :periodList="periodList" @on-error="onError" />
+    <DragTimePicker
+      v-model="value"
+      :needPeriod="true"
+      :range="24"
+      :step="60"
+      :periodList="periodList"
+      @change="change"
+      @on-error="onError"
+      @custom-time-period-change="timePeriodChange"
+    />
   </div>
 </template>
 
@@ -13,19 +22,22 @@ export default {
   },
   data() {
     return {
-      value: [],
+      value: [
+        { startTime: "01:00", endTime: "02:00" },
+        { startTime: "03:00", endTime: "04:00" }
+      ],
       disabled: false,
       periodList: [
         {
-          timePeriod: "01:00~02:00",
-          label: "1点到2点",
-          key: "1-2",
+          timePeriod: "01:00~06:00",
+          label: "1点到6点",
+          key: "1-6",
           selected: false
         },
         {
-          timePeriod: "03:00~04:00",
-          label: "3点到4点",
-          key: "3-4",
+          timePeriod: "20:00~23:00",
+          label: "20点到23点",
+          key: "20-23",
           selected: false
         }
       ]
