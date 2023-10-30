@@ -31,8 +31,9 @@ type IPeriodList = Array<ITimePeriod>;
 
 ### Events
 
-| 事件名称                  | 说明                     | 回调参数             |
-| ------------------------- | ------------------------ | -------------------- |
-| change                    | 值变化时触发             | (Value: IValue)      |
-| custom-time-period-change | 点击时间段区的按钮时触发 | (Value: ITimePeriod) |
-| on-clear                  | 点击清空选择时触发       |                      |
+| 事件名称                  | 说明                     | 回调参数             | 备注                                                 |
+| ------------------------- | ------------------------ | -------------------- | ---------------------------------------------------- |
+| change                    | 值变化时触发             | (Value: IValue)      |                                                      |
+| custom-time-period-change | 点击时间段区的按钮时触发 | (Value: ITimePeriod) |                                                      |
+| on-clear                  | 点击清空选择时触发       |                      |                                                      |
+| on-error                  | 错误回调函数             | (errMsg: string)     | 触发内部错误规则，<br />比如`选择时间不能超过24小时` |

@@ -311,7 +311,8 @@ export default {
       if (item.col - this.col >= 24 * this.colspan) {
         this.height = 0;
         this.mode = 0;
-        return this.$message.error("时段选择不得超过24小时");
+        this.$emit("on-error", "时段选择不得超过24小时");
+        return;
       }
       if (item.col <= this.col) {
         this.selectTime([item.col, this.col], !this.check);

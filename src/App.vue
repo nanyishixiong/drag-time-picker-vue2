@@ -1,6 +1,6 @@
 <template>
   <div style="width: 1200px">
-    <DragTimePicker v-model="value" :needPeriod="true" :range="24" :step="30" @change="change" :periodList="periodList" />
+    <DragTimePicker v-model="value" :needPeriod="true" :range="48" :step="60" @change="change" :periodList="periodList" @on-error="onError" />
   </div>
 </template>
 
@@ -43,6 +43,9 @@ export default {
     },
     change(value) {
       console.log(value);
+    },
+    onError(err) {
+      console.log(err);
     }
   }
 };
