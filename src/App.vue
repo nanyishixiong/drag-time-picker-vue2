@@ -1,6 +1,6 @@
 <template>
   <div style="width: 1200px">
-    <DragTimePicker v-model="value" :needPeriod="true" :range="48" :step="30" @change="change" :periodList="periodList" />
+    <DragTimePicker v-model="value" :needPeriod="true" :range="24" :step="30" @change="change" :periodList="periodList" />
   </div>
 </template>
 
