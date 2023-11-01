@@ -146,9 +146,14 @@ export default {
     },
     range: {
       // 代表展示多少个小时
-      type: Number,
+      validator: function (value) {
+        if (value !== 24 && value !== 48) {
+          throw Error(`the value of "range" only be 24 or 48`);
+        }
+        return true;
+      },
       default() {
-        return 48;
+        return 24;
       }
     },
     step: {

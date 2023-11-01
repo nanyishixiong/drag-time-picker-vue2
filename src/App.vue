@@ -3,7 +3,6 @@
     <DragTimePicker
       v-model="value"
       :needPeriod="true"
-      :range="24"
       :step="60"
       :periodList="periodList"
       @change="change"
@@ -14,7 +13,7 @@
 </template>
 
 <script>
-import DragTimePicker from "./components/dragTimePicker";
+import DragTimePicker from "@banmafe/drag-time-picker-vue2";
 export default {
   name: "App",
   components: {
