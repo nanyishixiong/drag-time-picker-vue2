@@ -8,6 +8,7 @@
         :key="item.key"
         :disabled="disabled"
         @click="customTimePeriodChangeHandler($event, index)"
+        type="button"
       >
         {{ item.timePeriod + "(" + item.label + ")" }}
       </button>
