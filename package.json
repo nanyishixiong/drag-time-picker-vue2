@@ -9,6 +9,7 @@
   "author": "Nanyi",
   "license": "ISC",
   "devDependencies": {
+    "@changesets/cli": "^2.27.1",
     "@rollup/plugin-terser": "^0.4.4",
     "node-sass": "^9.0.0",
     "rollup": "^4.9.1",

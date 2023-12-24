@@ -20,8 +20,8 @@ jobs:
 
       - name: 部署
         uses: actions/setup-node@v3
-      - run: npm version patch
-      - run: npm publish
+      - run: changeset version
+      - run: changeset publish
         env:
           # 在第三步中设置的 NPM_TOKEN
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
