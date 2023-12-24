@@ -24,9 +24,6 @@ jobs:
         with:
           # 执行更新版本和发布的命令
           version: npm run version
-          publish: npm run publish
-          commit: "[ci] release"
-          title: "[ci] release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 在第三步中设置的 NPM_TOKEN
