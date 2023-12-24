@@ -23,8 +23,8 @@ jobs:
         uses: changesets/action@v1
         with:
           # 执行更新版本和发布的命令
-          version: changeset version
-          publish: changeset publish
+          version: npm run version
+          publish: npm run publish
           commit: "[ci] release"
           title: "[ci] release"
         env:
