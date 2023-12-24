@@ -19,15 +19,7 @@ jobs:
       - run: npm run build
 
       - name: 部署
-        # 默认配置
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          # 在第三步中设置的 ACCESS_TOKEN
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          # 指定推送到的远程分支
-          BRANCH: pages
-          # 指定构建之后的产出路径
-          FOLDER: dist
+        uses: actions/setup-node@v3
       - run: npm publish
         env:
           # 在第三步中设置的 NPM_TOKEN
