@@ -1,6 +1,6 @@
 ## 拖拽时间选择器
 
-![demo](./src/assets/image.png)
+![demo](./assets/image.png)
 
 ### Attributes
 

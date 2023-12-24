@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import DragTimePicker from "@banmafe/drag-time-picker-vue2";
+import DragTimePicker from "../../dist/bundle.js";
 export default {
   name: "App",
   components: {

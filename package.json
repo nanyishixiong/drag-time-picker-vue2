@@ -1,21 +1,22 @@
 {
   "name": "drag-time-picker-vue2",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "![demo](./assets/image.png)",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 4173"
+    "build": "rollup --config"
+  },
+  "author": "Nanyi",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "node-sass": "^9.0.0",
+    "rollup": "^4.9.1",
+    "rollup-plugin-scss": "^4.0.0",
+    "rollup-plugin-vue": "^5.1.9",
+    "vue-template-compiler": "^2.7.7"
   },
   "dependencies": {
-    "@banmafe/drag-time-picker-vue2": "^0.0.2",
     "vue": "^2.7.7"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-legacy": "^2.0.0",
-    "@vitejs/plugin-vue2": "^1.1.2",
-    "sass": "^1.69.4",
-    "sass-loader": "^13.3.2",
-    "terser": "^5.14.2",
-    "vite": "^3.0.2"
   }
 }

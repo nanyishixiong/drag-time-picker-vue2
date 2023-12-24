@@ -3,9 +3,9 @@
     <!-- 时间段区域 支持 单选和多选 -->
     <div v-if="needPeriod" class="button-wrapper">
       <button
-        class="el-button"
-        v-for="(item, index) in customPeriodList"
         :key="item.key"
+        v-for="(item, index) in customPeriodList"
+        class="el-button"
         :disabled="disabled"
         @click="customTimePeriodChangeHandler($event, index)"
         type="button"
@@ -22,19 +22,19 @@
         <thead class="c-time-head">
           <!-- 表头——时间段 00:00 - 12:00 -->
           <tr>
-            <th v-for="(t, i) in thLabel" :key="i" :colspan="12 * colspan">{{ t }}</th>
+            <th :key="i" v-for="(t, i) in thLabel" :colspan="12 * colspan">{{ t }}</th>
           </tr>
           <!-- 表头——小时 -->
           <tr>
-            <td v-for="(t, n) in theadArr" :key="n" :colspan="colspan">{{ t }}</td>
+            <td :key="n" v-for="(t, n) in theadArr" :colspan="colspan">{{ t }}</td>
           </tr>
         </thead>
         <!-- 表格体 -->
         <tbody class="c-time-body">
           <tr>
             <td
-              v-for="(t, i) in timeData"
               :key="i"
+              v-for="(t, i) in timeData"
               :data-time="`${t.col}`"
               :class="selectClasses(t)"
               @mouseenter="cellEnter(t)"
