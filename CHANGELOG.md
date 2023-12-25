@@ -1,5 +1,11 @@
 # drag-time-picker-vue2
 
+## 1.0.10
+
+### Patch Changes
+
+- e4aefee: message
+
 ## 1.0.9
 
 ### Patch Changes
