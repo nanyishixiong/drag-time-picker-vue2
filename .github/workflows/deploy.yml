@@ -24,9 +24,12 @@ jobs:
           npm run version
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b dev
           git status --porcelain
           git add .
           git commit -m "Version Packages"
+          git push origin dev
+          git merge master
 
       - run: npm run build
       - run: npm run publish
