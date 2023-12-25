@@ -7,12 +7,21 @@ export default {
   input: "src/index.js",
   output: [
     {
-      file: "dist/bundle.js",
+      file: "dist/esm/index.js",
       format: "es"
     },
     {
-      file: "dist/bundle.min.js",
+      file: "dist/esm/index.min.js",
       format: "es",
+      plugins: [terser()]
+    },
+    {
+      file: "dist/cjs/index.js",
+      format: "cjs"
+    },
+    {
+      file: "dist/cjs/index.min.js",
+      format: "cjs",
       plugins: [terser()]
     }
   ],

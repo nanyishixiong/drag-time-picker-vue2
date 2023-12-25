@@ -2,17 +2,27 @@
   "name": "drag-time-picker-vue2",
   "version": "1.0.6",
   "description": "drag-time-picker-vue2",
-  "main": "index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "source": "./src/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.min.js",
+      "require": "./dist/cjs/index.min.js"
+    }
+  },
   "repository": "git@github.com:nanyishixiong/drag-time-picker-vue2.git",
   "scripts": {
     "build": "rollup --config",
+    "create": "npx changeset",
     "version": "npx changeset version",
     "publish": "npx changeset publish",
     "release": "npm run build && npm run publish"
   },
   "files": [
     "dist",
-    "assets"
+    "assets",
+    "src"
   ],
   "publishConfig": {
     "access": "public"
