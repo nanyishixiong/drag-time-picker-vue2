@@ -22,8 +22,9 @@ jobs:
       - name: 更新版本
         run: |
           npm run version
-          git add .
-          git commit -m Version Packages
+          /usr/bin/git status --porcelain
+          /usr/bin/git add .
+          /usr/bin/git commit -m Version Packages
 
       - run: npm run build
       - run: npm run publish
