@@ -29,7 +29,8 @@ jobs:
           git config user.email "1543922073@qq.com"
           npm whoami
           git add .
-          git commit -m "update"
+          echo "::set-env name=PACKAGE_VERSION::$(jq -r '.version' package.json)"
+          git commit -m "v$PACKAGE_VERSION"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
