@@ -18,31 +18,30 @@ jobs:
           node-version: 18
           registry-url: https://registry.npmjs.org/
       - name: 安装依赖
-        run: |
-          npm ci
-          npm run build
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: npm run version
-          publish: npm run publish
-          commit: "[ci] release"
-          title: "[ci] release"
+        run: npm ci
+      #     npm run build
+      # - name: Create Release Pull Request or Publish to npm
+      #   id: changesets
+      #   uses: changesets/action@v1
+      #   with:
+      #     version: npm run version
+      #     publish: npm run publish
+      #     commit: "[ci] release"
+      #     title: "[ci] release"
 
-        # - name: 更新版本
-        #   run: |
-        #     npm run version
-        #     git config user.name "github-actions[bot]"
-        #     git config user.email "github-actions[bot]@users.noreply.github.com"
-        #     git checkout -b dev
-        #     git status --porcelain
-        #     git add .
-        #     git commit -m "Version Packages"
-        #     git push origin dev
-        #     git merge master
-        # - run: npm run build
-        # - run: npm run publish
+      - name: 更新版本
+        run: |
+          npm run version
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b dev
+          git status --porcelain
+          git add .
+          git commit -m "Version Packages"
+          git push origin dev
+          git merge master
+      - run: npm run build
+      - run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
