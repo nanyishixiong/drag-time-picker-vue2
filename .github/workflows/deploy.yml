@@ -20,6 +20,12 @@ jobs:
       - name: 安装依赖
         run: npm ci
 
+      - name: Get version from package.json
+        id: version
+        run: |
+          npm run version
+          echo ::set-output name=version::$(node -e "console.log(require('./package.json').version)")
+
       - name: 更新版本 & build
         run: |
           git branch
@@ -29,8 +35,7 @@ jobs:
           git config user.email "1543922073@qq.com"
           npm whoami
           git add .
-          echo "::set-env name=PACKAGE_VERSION::$(jq -r '.version' package.json)"
-          git commit -m "v$PACKAGE_VERSION"
+          git commit -m "v${{steps.version.outputs.version}}"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
