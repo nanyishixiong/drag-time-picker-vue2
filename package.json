@@ -3,6 +3,7 @@
   "version": "1.0.6",
   "description": "![demo](./assets/image.png)",
   "main": "index.js",
+  "repository": "git@github.com:nanyishixiong/drag-time-picker-vue2.git",
   "scripts": {
     "build": "rollup --config",
     "version": "npx changeset version",
