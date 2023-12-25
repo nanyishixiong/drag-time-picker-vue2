@@ -24,8 +24,6 @@ jobs:
         run: |
           git config user.name "wuguohao"
           git config user.email "1543922073@qq.com"
-          git checkout -b dev
-          git status --porcelain
           npm run version
 
       - name: 发布
@@ -35,8 +33,7 @@ jobs:
           npm run build
           git add .
           git commit -m "Version Packages"
-          git push origin dev --force
-          git merge master
+          git push origin master --force
           npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
