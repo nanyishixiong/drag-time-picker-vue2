@@ -40,8 +40,10 @@ jobs:
           git commit -m "Version Packages"
           git push origin dev --force
           git merge master
-      - run: npm run build
-      - run: npm run publish
+      - run: |
+          npm whoami
+          npm run build
+          npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
