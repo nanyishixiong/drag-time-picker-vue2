@@ -20,20 +20,25 @@ jobs:
       - name: 安装依赖
         run: npm ci
 
-      - name: 更新版本
+      - name: 更新版本 & build
+        run: |
+          npm run version
+          npm run build
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet || echo "::set-output name=changed::true"
+
+      - name: 发布
+        if: steps.check_changes.outputs.changed == 'true'
         run: |
           git config user.name "wuguohao"
           git config user.email "1543922073@qq.com"
-          npm run version
-
-      - name: 发布
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           npm whoami
-          npm run build
-          git checkout master
           git add .
           git commit -m "update"
+          git push 
           npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
