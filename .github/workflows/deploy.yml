@@ -34,6 +34,7 @@ jobs:
           npm run version
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          npm login
           git checkout -b dev
           git status --porcelain
           git add .
