@@ -32,9 +32,8 @@ jobs:
       - name: 更新版本
         run: |
           npm run version
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          git config user.name "15439"
+          git config user.email "1543922073@qq.com"
           git checkout -b dev
           git status --porcelain
           git add .
@@ -43,6 +42,7 @@ jobs:
           git merge master
       - name: 发布
         run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           npm whoami
           npm run build
           npm run publish
