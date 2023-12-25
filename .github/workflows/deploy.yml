@@ -25,6 +25,9 @@ jobs:
           git branch
           npm run version
           npm run build
+          git config user.name "wuguohao"
+          git config user.email "1543922073@qq.com"
+          npm whoami
           git add .
           git commit -m "update"
           git push
@@ -36,11 +39,7 @@ jobs:
 
       - name: 发布
         if: steps.check_changes.outputs.changed == 'true'
-        run: |
-          git config user.name "wuguohao"
-          git config user.email "1543922073@qq.com"
-          npm whoami
-          npm run publish
+        run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
