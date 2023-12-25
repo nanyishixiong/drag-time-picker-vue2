@@ -813,5 +813,6 @@ __vue_render__._withStripped = true;
 __vue_component__.install = (Vue) => {
   Vue.component(__vue_component__.name, __vue_component__);
 };
+console.log("change");
 
 module.exports = __vue_component__;

@@ -1,6 +1,6 @@
 {
   "name": "drag-time-picker-vue2",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "drag-time-picker-vue2",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
