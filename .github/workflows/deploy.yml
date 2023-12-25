@@ -35,11 +35,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b dev
-          git pull origin dev
           git status --porcelain
           git add .
           git commit -m "Version Packages"
-          git push origin dev
+          git push origin dev --force
           git merge master
       - run: npm run build
       - run: npm run publish
