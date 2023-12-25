@@ -1,12 +1,13 @@
 {
   "name": "drag-time-picker-vue2",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "![demo](./assets/image.png)",
   "main": "index.js",
   "scripts": {
     "build": "rollup --config",
     "version": "npx changeset version",
-    "publish": "npx changeset publish"
+    "publish": "npx changeset publish",
+    "release": "npm run build && npm run publish"
   },
   "author": "Nanyi",
   "license": "ISC",
