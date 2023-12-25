@@ -34,14 +34,15 @@ jobs:
           npm run version
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm login
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           git checkout -b dev
           git status --porcelain
           git add .
           git commit -m "Version Packages"
           git push origin dev --force
           git merge master
-      - run: |
+      - name: 发布
+        run: |
           npm whoami
           npm run build
           npm run publish
