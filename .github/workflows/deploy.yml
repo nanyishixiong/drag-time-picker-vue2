@@ -17,8 +17,14 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm run version
+      - name: 安装依赖
+        run: npm ci
+      - name: 更新版本
+        run: |
+          npm run version
+          git add .
+          git commit -m Version Packages
+
       - run: npm run build
       - run: npm run publish
         env:
