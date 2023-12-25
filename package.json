@@ -1,6 +1,6 @@
 {
   "name": "drag-time-picker-vue2",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "![demo](./assets/image.png)",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,8 @@
     "release": "npm run build && npm run publish"
   },
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "publishConfig": {
     "access": "public"
