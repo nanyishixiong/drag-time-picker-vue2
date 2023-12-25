@@ -31,7 +31,9 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
           npm whoami
           npm run build
-          git push origin master --force
+          git checkout master
+          git add .
+          git commit -m "update"
           npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
